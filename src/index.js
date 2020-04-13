@@ -6,7 +6,7 @@ import {BrowserRouter,Switch,Route} from 'react-router-dom';
 import Bases from './components/menu/bases';
 import Match from './components/menu/match';
 import NotFound from './components/menu/notfound';
-import Home from './components/menu/home';
+//import Home from './components/menu/home';
 
 import * as serviceWorker from './serviceWorker';
 
