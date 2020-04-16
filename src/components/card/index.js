@@ -1,34 +1,62 @@
-import React from 'react';
-import '../card/styles.css';
-import { Button, Form, FormFile } from 'react-bootstrap';
+import React, {useState} from 'react';
+import './styles.css';
+import Api from '../../API';
+import { Button, Form, FormLabel, FormControl } from 'react-bootstrap';
+import FormFileInput from 'react-bootstrap/FormFileInput';
+import FormFileLabel from 'react-bootstrap/FormFileLabel';
 
-const Cardd = () => {
+
+const Carde = () => {
+    const [fileUpload, setFileUpload] = useState('');
+    const [fileName, setFileName] = useState('Procure sua Base');
+    const origins=["Localiza","Movida"];
+
+    function onChange(e){
+        setFileUpload(e.target.files[0]);
+        setFileName(e.target.files[0].name);
+    }
+
+    async function onSubmit(e){
+        e.preventDefault();
+        const formData = new FormData;
+        formData.append('file', fileUpload);
+
+        try{
+            await Api.post('/file/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form'
+                }
+            });
+            console.log('Arquivo enviado')
+
+            setFileUpload('');
+            setFileName('Procure sua Base');
+
+        } catch(err){
+            console.log(err);
+        }
+    }
+
 
     return (
-        <section className="card">
+        <section className="card-section">
             <div className="card-columns">
                 <div className="card mb-3">
                     <div className="card-body">
-                        <h2 id="Base-title" className="card-title">Base Match</h2>
+                        <h2 id="Base-title" className="card-title">BASE MATCH</h2>
                         <div>
-                            <FormFile action='file/upload' method='post' encType='multipart/form-data'>
-                                <Form.Group className="card-options" controlId="baseUpload">
-                                    <div className="select-container">
-                                        <Form.Label>Envie sua Base</Form.Label>
-                                        <Button className="find-csv" variant="outline-warning">Procurar CSV</Button>
-                                    </div>
-                                    <div className="select-container">
-                                        <Form.Label>Base</Form.Label>
-                                        <Form.Control className="base-select" as="select" size="sm" custom>
-                                            <option>--Selecionar--</option>
-                                            <option>Movida</option>
-                                            <option>Localiza</option>
-                                        </Form.Control>
-                                    </div>
-
-                                </Form.Group>
-                            </FormFile >
+                            <Form onSubmit={onSubmit}>
+                                <FormFileInput type="file" className="custom-file-input" id="customFile" onChange={onChange}></FormFileInput>
+                                <FormFileLabel className="custom-file-label" htmlFor="customFile">{fileName}</FormFileLabel>
+                                <FormLabel className="origin-title">ORIGEM</FormLabel>
+                                <FormControl as="select">
+                                <option value = "">Selecione</option>
+                                        {origins.map(origin => <option value= {origin} key ={origin}> {origin}</option>)}
+                                </FormControl>
+                                <Button type="submit"onSubmit={onSubmit}>ENVIAR</Button>
+                            </Form>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -36,4 +64,4 @@ const Cardd = () => {
     );
 }
 
-export default Cardd;
+export default Carde;
